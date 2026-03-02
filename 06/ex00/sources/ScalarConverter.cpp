@@ -9,27 +9,54 @@ ScalarConverter& ScalarConverter::operator=(const ScalarConverter& other){}
 
 ScalarConverter::~ScalarConverter(void){}
 
-int  isValidQuote(std::string literal) const{
-  if (literal.length() != 3)
-    return (0);
+static std::string trimQuotes(const std::string& literal) {
+    size_t len = literal.length();
+    bool isntQuoted = (len < 2 || literal[0] != literal[len - 1] || (literal[0] != '\'' && literal[0] != '"'));
+    if (isntQuoted)
+        return literal;
+    return literal.substr(1, len - 2);
 }
-static std::string toChar(std::string literal) const{
-  if (literal.length() > 1 && !isValidQuote())
-      return (IMPOSSIBLE);
+
+static bool isChar(const std::string& s) {
+    return s.length() == 3 && s[0] == '\'' && s[2] == '\'';
+}
+
+static bool isInt(const std::string& s) {
+    bool sign = (s[0] == '+' || s[0] == '-');
+    if (sign && s.length() == 1) return false;
+    for (size_t i = (size_t)sign; i < s.length(); ++i)
+        if (s[i] < '0' || s[i] > '9') return false;
+    return true;
+}
+
+static enum e_types determinType(std::string literal) const{
+  bool (*typeDetectionFunctions[])(std::string) = {isChar, isInt, isDouble, isFloat};
+
+  if (!s.empty())
+    for (int i = 0; i < sizeof(typeDetectionFunctions); i++)
+      if (typeDetectionFunctions[i](literal))
+        return (e_types)i;
+  throw ScalarConverter::Exception(ERROR_MSG_NO_VALID_TYPE);
+}
+
+static void  fromChar(std::string){
+  char  charValue;
   
 }
-static std::string toDigit(std::string literal) const;
-static std::string toFloat(std::string literal) const;
-static std::string toDouble(std::string literal) const;
 
-void  ScalarConverter::convert(std::string literal) const{
-  enum type = checkType
-  print("char: ");
-  print(toChar(literal));
-  print("int: ");
-  print(toDigit(literal));
-  print("float: ");
-  print(toFloat(literal));
-  print("double: ");
-  print(toDouble(literal));
+static void  printConvertedValues(void){
+  print("char: " + _char);
+  print("int: " + _int);
+  print("float: " + _float);
+  print("double: " + _double);
+}
+
+void  ScalarConverter::convert(std::string literal){
+  enum e_types type;
+  void (*convertionFunctions[])(std::string) = {fromChar, fromInt, fromDouble, fromFloat};
+
+  literal = trimQuotes(literal);
+  type = determinType(literal);
+  convertionFunctions[(size_t)type](literal);
+  printConvertedValues();
 }
