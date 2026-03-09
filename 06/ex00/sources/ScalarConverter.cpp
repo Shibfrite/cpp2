@@ -2,31 +2,18 @@
 #include "support.hpp"
 
 ScalarConverter::ScalarConverter(void){}
-
 ScalarConverter::ScalarConverter(const ScalarConverter& other){(void)other;}
-
-ScalarConverter& ScalarConverter::operator=(const ScalarConverter& other){}
-
+ScalarConverter& ScalarConverter::operator=(const ScalarConverter& other){(void)other;return *this;}
 ScalarConverter::~ScalarConverter(void){}
 
-static std::string trimQuotes(const std::string& literal) {
-    size_t len = literal.length();
-    bool isntQuoted = (len < 2 || literal[0] != literal[len - 1] || (literal[0] != '\'' && literal[0] != '"'));
-    if (isntQuoted)
-        return literal;
-    return literal.substr(1, len - 2);
-}
-
 static bool isChar(const std::string& s) {
-    return s.length() == 3 && s[0] == '\'' && s[2] == '\'';
+  return s.length() == 3 && s[0] == '\'' && s[2] == '\'';
 }
 
 static bool isInt(const std::string& s) {
-    bool sign = (s[0] == '+' || s[0] == '-');
-    if (sign && s.length() == 1) return false;
-    for (size_t i = (size_t)sign; i < s.length(); ++i)
-        if (s[i] < '0' || s[i] > '9') return false;
-    return true;
+  char* end;
+  strtol(s.c_str(), &end, 10);
+  return *end == '\0';
 }
 
 static enum e_types determinType(std::string literal){
@@ -131,13 +118,26 @@ std::string toDouble(t_data data) {
         case DOUBLE: val = data.value.d; break;
     }
     return std::to_string(static_cast<double>(val));
+static bool isFloat(const std::string& s) {
+  char* end;
+  strtof(s.c_str(), &end);
+  return *end == 'f' && *(end + 1) == '\0';
 }
 
-static void  printConvertedValues(void){
-  print("char: " + _char);
-  print("int: " + _int);
-  print("float: " + _float);
-  print("double: " + _double);
+static bool isDouble(const std::string& s) {
+  char* end;
+  strtod(s.c_str(), &end);
+  return *end == '\0';
+}
+
+static enum e_types determinType(std::string literal){
+  bool (*typeDetectionFunctions[])(const std::string&) = {isChar, isInt, isFloat, isDouble};
+
+  if (!literal.empty())
+      for (int i = 0; i < NUM_TYPES; i++)
+          if (typeDetectionFunctions[i](literal))
+              return (e_types)i;
+  throw Exception(ERR_MSG_OUT_OF_RANGE);
 }
 
 void  ScalarConverter::convert(std::string literal){
