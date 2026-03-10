@@ -1,4 +1,4 @@
-NAME		:= ex00
+NAME		:= convert
 
 CC			:= c++
 CFLAGS		:= -Wall -Wextra -Werror -g -O0 -std=c++98 -pedantic
@@ -8,7 +8,7 @@ INC_DIR		:= includes
 SRC_DIR		:= sources
 OBJ_DIR		:= objects
 
-SRC_FILES	:= main.cpp ScalarConverter.cpp support.cpp
+SRC_FILES	:= main.cpp ScalarConverter.cpp support.cpp IsFunctions.cpp FromFunctions.cpp ToFunctions.cpp
 SRC_PREFIX	:= $(SRC_DIR)/
 SRCS		:= $(addprefix $(SRC_PREFIX),$(SRC_FILES))
 OBJS		:= $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
