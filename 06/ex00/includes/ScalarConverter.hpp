@@ -3,8 +3,11 @@
 #include<iostream>
 #include<string>
 #include<cstdlib>
+#include<cerrno>
+#include<limits>
 
-#define ERR_MSG_OUT_OF_RANGE "overflow"
+#define ERR_MSG_OUT_OF_RANGE "out of range"
+#define ERR_MSG_IMPOSSIBLE "impossible"
 #define ERR_MSG_UNPRINTABLE "unprintable"
 #define ERR_TOO_EARLY "Early error:"
 
