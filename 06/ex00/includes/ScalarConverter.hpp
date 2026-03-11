@@ -45,11 +45,6 @@ class Exception : public std::exception {
 class ScalarConverter
 {
 	private:
-    //t_data      _convertedData;
-    std::string _char;
-    std::string _int;
-    std::string _float;
-    std::string _double;
 		ScalarConverter(void);
 		ScalarConverter(const ScalarConverter& other);
 		ScalarConverter& operator=(const ScalarConverter& other);
