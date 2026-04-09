@@ -22,7 +22,9 @@ double  getNumber(std::string *line, enum timeUnit t)
   size_t  pos;
 
   number = std::stoi(*line, &pos);
-  if (t != DAY && (*line)[pos] != DATE_SEPARATOR)
+  if (t == YEAR && (*line)[pos] != DATE_SEPARATOR)
+    throw std::exception();
+  else if (t == MONTH && (*line)[pos] != DATE_SEPARATOR)
     throw std::exception();
   else if (t == DAY && (*line)[pos] != VALUES_SEPARATOR)
     throw std::exception();
@@ -48,48 +50,78 @@ bool isDateValid(int year, unsigned int month, unsigned int day)
 
 std::string getDate(std::string line)
 {
-  int           year;
-  unsigned int  month;
-  unsigned int  day;
+  int         year;
+  int         month;
+  int         day;
+  std::string date;
 
-  year = getNumber(&line, YEAR);
-  month = static_cast<unsigned int>(getNumber(&line, MONTH));
-  day = static_cast<unsigned int>(getNumber(&line, DAY));
+  date = line.substr(0, line.find(' '));
 
-  if (!isDateValid(year, month, day))
-    throw std::invalid_arguements();
+  try{
+    year = getNumber(&line, YEAR);
+    month = static_cast<unsigned int>(getNumber(&line, MONTH));
+    day = static_cast<unsigned int>(getNumber(&line, DAY));
 
-  return line.substr(0, line.find(' '));
+    if (!isDateValid(year, month, day))
+      throw std::exception();
+  } catch(std::exception& e){
+    print("Error: bad input => " + date)
+    throw std::exception();
+  }
+  return date;
 }
 
-//function can throw error, catch higher
+template<typename T>
 T getRate(std::string line)
 {
-  std::string value = line.substr(line.find('|') + 1);
-  return std::stof(value);
+  T rate;
+  std::string token = line.substr(line.find('|') + 2);
+
+  try {
+    rate = std::stof(token);
+  } catch(std::exception& e) {
+    print("Error: too large a number => " + token);
+    throw e;
+  }
+  if (rate <= 0 || rate >= 1000)
+  {
+    if (rate <= 0)
+      print("Error: too low a number => " + token);
+    else
+      print("Error: too large a number => " + token);
+    throw std::exception();
+  }
+  return rate;
 }
 
 template<typename T>
 bool parseLine(std::string line, std::string *date, T *rate)
 {
-  *date = getDate(line);
-  *rate = getRate(line);
-
+  try {
+    *date = getDate(line);
+    *rate = getRate(line);
+  } catch (std::exception& e) {
     return FAILURE;
+  }
   return SUCCESS;
 }
 
+//would print errors before showing the new map
+//correct behaviour is showing errors while printing result
 template<typename T>
-std::map parseCsv(void)
+std::map<std::string, T> parseCsv(void)
 {
-  std::map    result;
-  std::string line;
-  std::string date;
-  T           rate;
+  std::map<std::string, T>  result;
+  std::string               line;
+  std::string               date;
+  T                         rate;
 
   std::ifstream file(CSV_FILE);
-  while (std::getline(file, line) && parseLine(line, &date, &rate) == SUCCESS)
-    result.insert(date, rate);
+  if (!file)
+    throw std::exception();
+  while (std::getline(file, line))
+    if (parseLine(line, &date, &rate) == SUCCESS)
+      result.insert({date, rate});
   return (result);
 }
 
