@@ -8,7 +8,7 @@ INC_DIR		:= includes
 SRC_DIR		:= sources
 OBJ_DIR		:= objects
 
-SRC_FILES	:= BitcoinExchange.cpp main.cpp support.cpp
+SRC_FILES	:= BitcoinExchange.cpp parseCsv.cpp main.cpp support.cpp
 SRC_PREFIX	:= $(SRC_DIR)/
 SRCS		:= $(addprefix $(SRC_PREFIX),$(SRC_FILES))
 OBJS		:= $(SRCS:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
