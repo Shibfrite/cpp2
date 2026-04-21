@@ -14,3 +14,12 @@
 #define FAILURE 1
 
 #define OPERATORS std::string("+-*/")
+
+enum e_token_type
+{
+  INVALID,
+  EMPTY,
+  SPACE,
+  DIGIT,
+  OPERATOR
+};
