@@ -54,11 +54,10 @@ void  transfer_range(std::deque<int> *source, size_t source_start_index, unsigne
   source->erase(it, it + source_size);
 }
 
-size_t  binary_search(std::deque<int> *main, int greatest_loser, unsigned long pair_size, int min, int max)
+size_t  binary_search(std::deque<int> *main, int greatest_loser,
+                      unsigned long pair_size, int min, int max)
 {
-  if (min > max)
-    return min;
-  int mid = ((max + min) / (2 * pair_size)) * pair_size;
+  int mid = ((min + max) / 2) * pair_size;
   
   if (greatest_loser > (*main)[mid])
     min = mid + pair_size;
@@ -66,67 +65,76 @@ size_t  binary_search(std::deque<int> *main, int greatest_loser, unsigned long p
     max = mid - pair_size;
   else
     return mid;
+  if (min > max)
+    return mid;
   return binary_search(main, greatest_loser, pair_size, min, max);
 }
 
-int jacob_number_generator(int i)
+int compute_insertion_number(bool is_first)
 {
   static int jacob_number = 3;
   static int power_of_two = 4;
-  if (i == 1)
+  int number_of_insertion;
+  int previous_jacob_number;
+  if (is_first)
   {
    jacob_number = 3;
    power_of_two = 4;
+   return jacob_number;
   }
   power_of_two *= 2;
-  jacob_number = power_of_two - jacob_number;
-  return jacob_number;
+  previous_jacob_number = jacob_number;
+  jacob_number = power_of_two - previous_jacob_number;
+  number_of_insertion = jacob_number - previous_jacob_number;
+  return number_of_insertion;
 }
 
+//keep remaining numbers in main sequence
 void	sort(std::deque<int> *main, unsigned long pair_size)
 {
   std::deque<int> pend;
-  int             remains;
-  //print(to_str((int)pair_size));
-  if (pair_size <= 1) return ;
+  //int             remains;
+
   for (size_t pair_start_index = pair_size * 2;
       pair_start_index + pair_size <= main->size();
       pair_start_index += pair_size)
     transfer_range(main, pair_start_index, pair_size, &pend, pend.size());
-  remains = main->size() % pair_size;
+  /*remains = main->size() % pair_size;
   if (remains)
     transfer_range(main, main->size() - remains, remains, &pend, pend.size());
+    */ //We can keep the remaining numbers in main.
   //print("pend");
 	//print_deque(pend);
-  for (int i = 1; pend.size() >= pair_size; i++)
+  int index_to_insert = compute_insertion_number(true);
+  while (pend.size() >= pair_size)
   {
-    print("pend");
-    print_deque(pend);
-    print("main");
-    print_deque(*main);
-    print("insert at:");
-    print((int)binary_search(main, pend[pair_size - 1], pair_size, 0, main->size() - 1));
-    print((int)(jacob_number_generator(i) * pair_size));
-    int start = jacob_number_generator(i) * pair_size;
+    if (!index_to_insert)
+      index_to_insert = compute_insertion_number(false);
+    //print("pend");
+    //print_deque(pend);
+    //print("main");
+    //print_deque(*main);
+    int start = compute_insertion_number(false) * pair_size;
     if ((size_t)start > pend.size())
       start = pend.size() - pair_size;
-    transfer_range(&pend, start, pair_size, main, binary_search(main, pend[pair_size - 1], pair_size, 0, main->size() - 1));
+    transfer_range(&pend, start, pair_size, main, binary_search(main, pend[start], pair_size, 0, main->size() - 1));
+    index_to_insert--;
   }
   //print("main");
 	//print_deque(*main);
+  if (pair_size == 1) return ;
   sort(main, pair_size / 2);
 }
 
 int main(int argc, char **argv)
 {
 	(void)argc;
-  print(15/8);
 	std::deque<int> result = parse_input(argv + 1);
   size_t biggest_pair_size = sort_pairs(&result, 1);
 	//std::deque<int>::iterator it = result.begin();
   //print("post parsing");
-	//print_deque(result);
-  sort(&result, biggest_pair_size / 4);
-	//print_deque(result);
+	print_deque(result);
+  sort(&result, biggest_pair_size / 2);
+	print_deque(result);
 	return (SUCCESS);
 }
