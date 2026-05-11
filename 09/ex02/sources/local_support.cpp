@@ -1,47 +1,5 @@
 #include "support.hpp"
 
-std::string to_str(int n)
-{
-    std::ostringstream ss;
-    ss << n;
-    return ss.str();
-}
-
-std::string to_str(float n)
-{
-    std::ostringstream ss;
-    ss << n;
-    return ss.str();
-}
-
-void	print(std::string str)
-{
-	std::cout << str << std::endl;
-}
-
-void	print(int n)
-{
-	std::cout << to_str(n) << std::endl;
-}
-
-void	print(char c)
-{
-	std::cout << c << std::endl;
-}
-
-void	print_bool(bool value)
-{
-  if (value)
-    std::cout << "true" << std::endl;
-  else
-    std::cout << "false" << std::endl;
-}
-
-void	print_error(std::string str)
-{
-	std::cerr << "Error: " + str << std::endl;
-}
-
 bool is_sorted(std::deque<int> list)
 {
   for (std::deque<int>::iterator it = list.begin();it != list.end(); it++)
@@ -49,10 +7,6 @@ bool is_sorted(std::deque<int> list)
       return false;
   return true;
 }
-
-#include <deque>
-#include <cstdlib>
-#include <ctime>
 
 void fillDequeWithRandom(std::deque<int>& dq, int min, int max, std::size_t count) {
     dq.clear();
