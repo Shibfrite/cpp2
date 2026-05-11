@@ -85,7 +85,7 @@ int compute_insertion_number(bool is_first)
   power_of_two *= 2;
   previous_jacob_number = jacob_number;
   jacob_number = power_of_two - previous_jacob_number;
-  number_of_insertion = jacob_number - previous_jacob_number;
+  number_of_insertion = jacob_number - previous_jacob_number - 1;
   return number_of_insertion;
 }
 
@@ -93,8 +93,16 @@ int compute_insertion_number(bool is_first)
 void	sort(std::deque<int> *main, unsigned long pair_size)
 {
   std::deque<int> pend;
+  size_t          insertion_index;
   //int             remains;
+  bool is_debug;
 
+  is_debug = true; //pair_size != 4;
+  if (is_debug)
+  {
+    print("main");
+    print_deque(*main);
+  }
   for (size_t pair_start_index = pair_size * 2;
       pair_start_index + pair_size <= main->size();
       pair_start_index += pair_size)
@@ -105,20 +113,43 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
     */ //We can keep the remaining numbers in main.
   //print("pend");
 	//print_deque(pend);
-  int index_to_insert = compute_insertion_number(true);
+  int number_of_insertion = compute_insertion_number(true);
+  int maximal_insertion_index = number_of_insertion;
+  int index_of_pair_to_insert = (number_of_insertion - 2) * pair_size - 1;
+  int greatest_loser = pend[index_of_pair_to_insert + pair_size - 1];
   while (pend.size() >= pair_size)
   {
-    if (!index_to_insert)
-      index_to_insert = compute_insertion_number(false);
-    //print("pend");
-    //print_deque(pend);
-    //print("main");
-    //print_deque(*main);
-    int start = compute_insertion_number(false) * pair_size;
-    if ((size_t)start > pend.size())
-      start = pend.size() - pair_size;
-    transfer_range(&pend, start, pair_size, main, binary_search(main, pend[start], pair_size, 0, main->size() - 1));
-    index_to_insert--;
+    if (!number_of_insertion)
+    {
+      number_of_insertion = compute_insertion_number(false);
+      maximal_insertion_index = number_of_insertion;
+    }
+    if (is_debug)
+    {
+      print("main");
+      print_deque(*main);
+      print("pend");
+      print_deque(pend);
+    }
+    index_of_pair_to_insert = (number_of_insertion - 2) * pair_size;
+    if ((size_t)index_of_pair_to_insert > pend.size())
+      index_of_pair_to_insert = pend.size() - pair_size;
+    else if ((size_t)index_of_pair_to_insert < 0)
+      index_of_pair_to_insert = 0;
+    greatest_loser = pend[index_of_pair_to_insert + pair_size - 1];
+    if (is_debug)
+    {
+      print("pair_size:               " + to_str((int)pair_size));
+      print("number_of_insertion:     " + to_str(number_of_insertion));
+      print("index_of_pair_to_insert: " + to_str(index_of_pair_to_insert));
+      print("greatest_loser:          " + to_str(greatest_loser));
+      print("maximal_insertion_index: " + to_str(maximal_insertion_index));
+    }
+    insertion_index = binary_search(main, greatest_loser, pair_size, 1, maximal_insertion_index);
+    if (is_debug)
+      print("insertion_index:         " + to_str((int)insertion_index));
+    transfer_range(&pend, index_of_pair_to_insert, pair_size, main, insertion_index);
+    number_of_insertion--;
   }
   //print("main");
 	//print_deque(*main);
@@ -133,7 +164,7 @@ int main(int argc, char **argv)
   size_t biggest_pair_size = sort_pairs(&result, 1);
 	//std::deque<int>::iterator it = result.begin();
   //print("post parsing");
-	print_deque(result);
+	//print_deque(result);
   sort(&result, biggest_pair_size / 2);
 	print_deque(result);
 	return (SUCCESS);
