@@ -61,8 +61,6 @@ size_t  binary_search(std::deque<int> *main, int greatest_loser,
   int mid_pair_index = ((min + max) / 2);
   int mid_element_index  = mid_pair_index * pair_size + (pair_size - 1);
   
-  bool is_debug = false;
-  if (is_debug)
   {
     print("");
     print("--binary_search--");
@@ -105,14 +103,7 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
   std::deque<int> pend;
   size_t          insertion_index;
   //int             remains;
-  bool is_debug;
 
-  is_debug = true;
-  if (is_debug)
-  {
-    print("main");
-    print_deque(*main);
-  }
   for (size_t pair_start_index = pair_size * 2;
       pair_start_index + pair_size <= main->size();
       pair_start_index += pair_size)
@@ -121,14 +112,6 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
   int jacob_number = compute_insertion_number(true);
   int number_of_insertion = jacob_number - previous_jacob_number;
   int index_of_pair_to_insert = (number_of_insertion - 1) * pair_size;
-  if (is_debug)
-  {
-    print("pair_size:               " + to_str((int)pair_size));
-    print("number_of_insertion:     " + to_str(number_of_insertion));
-    print("index_of_pair_to_insert: " + to_str(index_of_pair_to_insert));
-    print((int)(index_of_pair_to_insert + pair_size - 1));
-    print((int)pend.size());
-  }
   if ((int)pend.size() <= (index_of_pair_to_insert))
     index_of_pair_to_insert = 0;
   int greatest_loser = pend[index_of_pair_to_insert + pair_size - 1];
@@ -143,31 +126,13 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
       number_of_insertion = jacob_number - previous_jacob_number;
       maximal_insertion_index = jacob_number + previous_jacob_number - 1;
     }
-    if (is_debug)
-    {
-      print("main");
-      print_deque(*main);
-      print("pend");
-      print_deque(pend);
-    }
     index_of_pair_to_insert = (number_of_insertion - 1) * pair_size;
     if ((size_t)index_of_pair_to_insert >= pend.size())
       index_of_pair_to_insert = pend.size() - pair_size;
     else if ((size_t)index_of_pair_to_insert < 0)
       index_of_pair_to_insert = 0;
     greatest_loser = pend[index_of_pair_to_insert + pair_size - 1];
-    if (is_debug)
-    {
-      print("pair_size:               " + to_str((int)pair_size));
-      print("number_of_insertion:     " + to_str(number_of_insertion));
-      print("number_of_inserted_num:  " + to_str(number_of_inserted_numbers));
-      print("index_of_pair_to_insert: " + to_str(index_of_pair_to_insert));
-      print("greatest_loser:          " + to_str(greatest_loser));
-      print("maximal_insertion_index: " + to_str((int)(maximal_insertion_index * pair_size)));
-    }
     insertion_index = binary_search(main, greatest_loser, pair_size, 0, maximal_insertion_index);
-    if (is_debug)
-      print("insertion_index:         " + to_str((int)insertion_index));
     transfer_range(&pend, index_of_pair_to_insert, pair_size, main, insertion_index);
     number_of_insertion--;
     number_of_inserted_numbers++;
