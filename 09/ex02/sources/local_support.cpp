@@ -23,3 +23,9 @@ void fillDequeWithRandom(std::deque<int>& dq, int min, int max, std::size_t coun
     }
 }
 
+void	print_deque(std::deque<int> list)
+{
+	for (size_t i = 0; i < list.size(); i++)
+    std::cout << to_str(list[i]) << " ";
+  print("");
+}
