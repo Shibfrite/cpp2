@@ -122,9 +122,10 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
   int previous_jacob_number = 1;
   int jacob_number = compute_insertion_number(true);
   int number_of_insertion = jacob_number - previous_jacob_number;
-  int maximal_insertion_index = jacob_number - 1;
   int index_of_pair_to_insert = (number_of_insertion - 1) * pair_size;
   int greatest_loser = pend[index_of_pair_to_insert + pair_size - 1];
+  int number_of_inserted_numbers = 1;
+  int maximal_insertion_index = number_of_inserted_numbers * 2 + number_of_insertion - 1;
   while (pend.size() >= pair_size)
   {
     if (!number_of_insertion)
@@ -132,6 +133,10 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
       previous_jacob_number = jacob_number;
       jacob_number = compute_insertion_number(false);
       number_of_insertion = jacob_number - previous_jacob_number;
+      if (number_of_insertion < (int)pend.size())
+        maximal_insertion_index = number_of_inserted_numbers * 2 + number_of_insertion - 1;
+      else
+        maximal_insertion_index = number_of_inserted_numbers * 2 + pend.size() - 1;
     }
     if (is_debug)
     {
@@ -159,8 +164,9 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
       print("insertion_index:         " + to_str((int)insertion_index));
     transfer_range(&pend, index_of_pair_to_insert, pair_size, main, insertion_index);
     number_of_insertion--;
-    if ((int)insertion_index != maximal_insertion_index)
-      maximal_insertion_index++;
+    number_of_inserted_numbers++;
+    if ((unsigned long)insertion_index == maximal_insertion_index * pair_size)
+      maximal_insertion_index--;
   }
   if (pair_size == 1) return ;
   sort(main, pair_size / 2);
@@ -175,7 +181,7 @@ int main(int argc, char **argv)
   if (argc > 1)
     result = parse_input(argv + 1);
   else
-    fillDequeWithRandom(result, 0, 10, 10);
+    fillDequeWithRandom(result, 0, 1000, 1000);
   print_deque(result);
   biggest_pair_size = sort_pairs(&result, 1);
   sort(&result, biggest_pair_size / 2);
