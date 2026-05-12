@@ -74,12 +74,10 @@ size_t  binary_search(std::deque<int> *main, int greatest_loser,
     print("--binary_search--");
     print("");
   }
-  if (mid_element_index >= (int)main->size())
-    return min * pair_size;
-  if (greatest_loser > (*main)[mid_element_index])
-    min = mid_pair_index + 1;
-  else if (greatest_loser < (*main)[mid_element_index])
+  if (greatest_loser < (*main)[mid_element_index] || mid_element_index >= (int)main->size())
     max = mid_pair_index - 1;
+  else if (greatest_loser > (*main)[mid_element_index])
+    min = mid_pair_index + 1;
   else
     return mid_element_index + 1;
   if (min > max)
@@ -109,7 +107,7 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
   //int             remains;
   bool is_debug;
 
-  is_debug = true; //pair_size != 4;
+  is_debug = true;
   if (is_debug)
   {
     print("main");
@@ -123,9 +121,19 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
   int jacob_number = compute_insertion_number(true);
   int number_of_insertion = jacob_number - previous_jacob_number;
   int index_of_pair_to_insert = (number_of_insertion - 1) * pair_size;
+  if (is_debug)
+  {
+    print("pair_size:               " + to_str((int)pair_size));
+    print("number_of_insertion:     " + to_str(number_of_insertion));
+    print("index_of_pair_to_insert: " + to_str(index_of_pair_to_insert));
+    print((int)(index_of_pair_to_insert + pair_size - 1));
+    print((int)pend.size());
+  }
+  if ((int)pend.size() <= (index_of_pair_to_insert))
+    index_of_pair_to_insert = 0;
   int greatest_loser = pend[index_of_pair_to_insert + pair_size - 1];
   int number_of_inserted_numbers = 1;
-  int maximal_insertion_index = number_of_inserted_numbers * 2 + number_of_insertion - 1;
+  int maximal_insertion_index = jacob_number + previous_jacob_number - 1;
   while (pend.size() >= pair_size)
   {
     if (!number_of_insertion)
@@ -133,10 +141,7 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
       previous_jacob_number = jacob_number;
       jacob_number = compute_insertion_number(false);
       number_of_insertion = jacob_number - previous_jacob_number;
-      if (number_of_insertion < (int)pend.size())
-        maximal_insertion_index = number_of_inserted_numbers * 2 + number_of_insertion - 1;
-      else
-        maximal_insertion_index = number_of_inserted_numbers * 2 + pend.size() - 1;
+      maximal_insertion_index = jacob_number + previous_jacob_number - 1;
     }
     if (is_debug)
     {
@@ -155,9 +160,10 @@ void	sort(std::deque<int> *main, unsigned long pair_size)
     {
       print("pair_size:               " + to_str((int)pair_size));
       print("number_of_insertion:     " + to_str(number_of_insertion));
+      print("number_of_inserted_num:  " + to_str(number_of_inserted_numbers));
       print("index_of_pair_to_insert: " + to_str(index_of_pair_to_insert));
       print("greatest_loser:          " + to_str(greatest_loser));
-      print("maximal_insertion_index: " + to_str(maximal_insertion_index));
+      print("maximal_insertion_index: " + to_str((int)(maximal_insertion_index * pair_size)));
     }
     insertion_index = binary_search(main, greatest_loser, pair_size, 0, maximal_insertion_index);
     if (is_debug)
@@ -177,18 +183,42 @@ int main(int argc, char **argv)
   (void)argc;
   std::deque<int> result;
   size_t          biggest_pair_size;
+  int             tries = 0;
+  bool            error_found = false;
 
-  if (argc > 1)
+  if (argc > 1) {
     result = parse_input(argv + 1);
+    print_deque(result);
+    biggest_pair_size = sort_pairs(&result, 1);
+    sort(&result, biggest_pair_size / 2);
+    print_deque(result);
+    if (is_sorted(result))
+      print("Sorted");
+    else
+      print("Unsorted");
+    return (SUCCESS);
+  }
+
+  while (tries < 100 && !error_found) {
+    fillDequeWithRandom(result, 0, 10, 10);
+    print_deque(result);
+    biggest_pair_size = sort_pairs(&result, 1);
+    sort(&result, biggest_pair_size / 2);
+    print_deque(result);
+    
+    if (is_sorted(result)) {
+      print("Sorted");
+      tries++;
+    } else {
+      print("Unsorted");
+      error_found = true;
+    }
+  }
+  
+  if (error_found)
+    print("ERROR: Sort failed!");
   else
-    fillDequeWithRandom(result, 0, 1000, 1000);
-  print_deque(result);
-  biggest_pair_size = sort_pairs(&result, 1);
-  sort(&result, biggest_pair_size / 2);
-  print_deque(result);
-  if (is_sorted(result))
-    print("Sorted");
-  else
-    print("Unsorted");
+    print("SUCCESS: 100 random sorts passed");
+    
   return (SUCCESS);
 }
