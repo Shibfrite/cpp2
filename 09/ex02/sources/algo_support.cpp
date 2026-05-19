@@ -7,11 +7,12 @@ size_t  binary_search(std::deque<int> *main, int greatest_loser,
   int mid_element_index  = mid_pair_index * pair_size + (pair_size - 1);
   
   if (greatest_loser < (*main)[mid_element_index] || mid_element_index >= (int)main->size())
+  {
+    total_comparaisons++;
     max = mid_pair_index - 1;
-  else if (greatest_loser > (*main)[mid_element_index])
-    min = mid_pair_index + 1;
+  }
   else
-    return mid_element_index + 1;
+    min = mid_pair_index + 1;
   if (min > max)
     return min * pair_size;
   return binary_search(main, greatest_loser, pair_size, min, max);
@@ -37,7 +38,12 @@ void set_loop_data(t_loop_data *loop_data, std::deque<int> *pend, int insertions
 {
   loop_data->index_of_pair = (insertions_left - 1) * pair_size;
   if ((int)pend->size() <= loop_data->index_of_pair)
-    loop_data->index_of_pair = 0;
+  {
+    if (pend->size() == 0)
+      loop_data->index_of_pair = 0;
+    else
+      loop_data->index_of_pair = pend->size() - pair_size;
+  }
   loop_data->greatest_loser = (*pend)[loop_data->index_of_pair + pair_size - 1];
 }
 

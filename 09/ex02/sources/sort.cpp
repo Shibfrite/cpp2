@@ -5,6 +5,7 @@ void	swap_pair(std::deque<int>::iterator pair_start, int element_size)
 	int greatest_elements[2];
 	greatest_elements[0] = pair_start[element_size - 1];
 	greatest_elements[1] = pair_start[(2 * element_size) - 1];
+  total_comparaisons++;
 	if (greatest_elements[0] > greatest_elements[1])
 		std::rotate(pair_start, pair_start + element_size, pair_start + 2 * element_size);
 }

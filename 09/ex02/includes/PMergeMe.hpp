@@ -8,6 +8,8 @@
 #define SUCCESS 0
 #define FAILURE 1
 
+extern int total_comparaisons;
+
 void	  swap_pair(std::deque<int>::iterator pair_start, int element_size);
 size_t  sort_pairs(std::deque<int> *list, unsigned long pair_size);
 
