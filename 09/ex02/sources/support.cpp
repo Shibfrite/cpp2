@@ -19,6 +19,8 @@ void	print(std::string str)
 	std::cout << str << std::endl;
 }
 
+void print(const char* s) { print(std::string(s)); }
+
 void	print(int n)
 {
 	std::cout << to_str(n) << std::endl;

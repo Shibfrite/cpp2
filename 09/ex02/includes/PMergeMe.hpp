@@ -10,8 +10,11 @@
 
 extern int total_comparaisons;
 
-void	  swap_pair(std::deque<int>::iterator pair_start, int element_size);
-size_t  sort_pairs(std::deque<int> *list, unsigned long pair_size);
+template <typename Container>
+void	  swap_pair(typename Container::iterator pair_start, int element_size);
+template <typename Container>
+size_t  sort_pairs(Container *list, unsigned long pair_size);
 
 int     compute_insertion_number(bool is_first);
-void	  jacob_sort(std::deque<int> *main, unsigned long pair_size);
+template <typename Container>
+void	  jacob_sort(Container *main, unsigned long pair_size);

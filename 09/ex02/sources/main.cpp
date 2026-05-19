@@ -1,8 +1,8 @@
 #include "PMergeMe.hpp"
 
-std::deque<int>	parse_input(char **input)
+template <typename Container>
+void  parse_input(Container &output, char **input)
 {
-	std::deque<int>	result;
 	int				      number;
 	char				    *endptr;
 	errno = 0;
@@ -11,10 +11,9 @@ std::deque<int>	parse_input(char **input)
 		number = std::strtol(*input, &endptr, 10);
 		if (errno != 0 || endptr == *input || *endptr != '\0')
 			throw std::exception();
-		result.push_back(number);
+		output.push_back(number);
 		input++;
 	}
-	return (result);
 }
 
 #include <vector>
@@ -27,9 +26,10 @@ int ford_johnson_bound(int n) {
     return (int)std::ceil(log_factorial);
 }
 
+
 void tester()
 {
-    std::deque<int>                   result;
+    std::deque<int>                   output;
     size_t                            biggest_pair_size;
     int                               max_tries    = 100;
     int                               max_list_size = 100;
@@ -52,15 +52,15 @@ void tester()
         while (tries < max_tries)
         {
             total_comparaisons = 0;
-            fillDequeWithRandom(result, 0, test_size, test_size);
-            new_list = result;
-            biggest_pair_size = sort_pairs(&result, 1);
-            jacob_sort(&result, biggest_pair_size / 2);
+            fillDequeWithRandom(output, 0, test_size, test_size);
+            new_list = output;
+            biggest_pair_size = sort_pairs(&output, 1);
+            jacob_sort(&output, biggest_pair_size / 2);
 
-            if (!is_sorted(result))
+            if (!is_sorted(output))
             {
                 print("ERROR: Sort failed at size " + to_str(test_size));
-                print_deque(new_list);
+                print(new_list);
                 return ;
             }
             if (total_comparaisons > max_comp) max_comp = total_comparaisons;
@@ -90,26 +90,48 @@ void tester()
 }
 int total_comparaisons = 0;
 
+#include <iomanip>
+#include <sys/time.h>
+
+// Returns current time in microseconds as a double
+double get_time_us() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * 1000000.0 + tv.tv_usec;
+}
+
+template <typename Container>
+void  sort(Container output, char **argv)
+{
+  Container input;
+  size_t    biggest_pair_size;
+
+  double start = get_time_us();
+  parse_input(input, argv + 1);
+  output = input;
+  biggest_pair_size = sort_pairs(&output, 1);
+  jacob_sort(&output, biggest_pair_size / 2);
+
+  double end = get_time_us();
+  double duration_us = end - start;
+  std::cout << "Before:  " << std::endl;
+  print(input);
+  std::cout << "After:   " << std::endl;
+  print(output);
+  std::cout << std::fixed << std::setprecision(5)
+            << duration_us << " us" << std::endl;
+}
+
 int main(int argc, char **argv)
 {
-  std::deque<int> result;
-  size_t          biggest_pair_size;
+  std::deque<int> output_d;
+  std::vector<int> output_v;
 
   if (argc == 1) {
     tester();
     return (SUCCESS);
   }
-  result = parse_input(argv + 1);
-  print_deque(result);
-  biggest_pair_size = sort_pairs(&result, 1);
-  jacob_sort(&result, biggest_pair_size / 2);
-  print_deque(result);
-  if (is_sorted(result))
-    print("Sorted");
-  else
-    print("Unsorted");
-  print(total_comparaisons);
-
-  
-return (SUCCESS);
+  sort(output_d, argv);
+  sort(output_v, argv);
+  return (SUCCESS);
 }

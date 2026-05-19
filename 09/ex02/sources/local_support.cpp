@@ -1,14 +1,16 @@
 #include "support.hpp"
 
-bool is_sorted(std::deque<int> list)
+template <typename Container>
+bool is_sorted(Container list)
 {
-  for (std::deque<int>::iterator it = list.begin();it != list.end(); it++)
+  for (typename Container::iterator it = list.begin();it != list.end(); it++)
     if (it != list.begin() && *it < *(it - 1))
       return false;
   return true;
 }
 
-void fillDequeWithRandom(std::deque<int>& dq, int min, int max, std::size_t count) {
+template <typename Container>
+void fillDequeWithRandom(Container& dq, int min, int max, std::size_t count) {
     dq.clear();
     static bool seeded = false;
     if (!seeded) {
@@ -23,7 +25,8 @@ void fillDequeWithRandom(std::deque<int>& dq, int min, int max, std::size_t coun
     }
 }
 
-void	print_deque(std::deque<int> list)
+template <typename Container>
+void	print(Container list)
 {
 	for (size_t i = 0; i < list.size(); i++)
     std::cout << to_str(list[i]) << " ";

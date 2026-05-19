@@ -1,6 +1,7 @@
 #include "PMergeMe.hpp"
 
-void	swap_pair(std::deque<int>::iterator pair_start, int element_size)
+template <typename Container>
+void	swap_pair(typename Container::iterator pair_start, int element_size)
 {
 	int greatest_elements[2];
 	greatest_elements[0] = pair_start[element_size - 1];
@@ -10,7 +11,8 @@ void	swap_pair(std::deque<int>::iterator pair_start, int element_size)
 		std::rotate(pair_start, pair_start + element_size, pair_start + 2 * element_size);
 }
 
-size_t  sort_pairs(std::deque<int> *list, unsigned long pair_size)
+template <typename Container>
+size_t  sort_pairs(Container *list, unsigned long pair_size)
 {
   if (pair_size < 1) return 0;
   else if (pair_size != 1)
@@ -37,9 +39,10 @@ int compute_insertion_number(bool is_first)
   return jacob_number;
 }
 
-void	jacob_sort(std::deque<int> *main, unsigned long pair_size)
+template <typename Container>
+void	jacob_sort(Container *main, unsigned long pair_size)
 {
-  std::deque<int>       pend;
+  Container       pend;
   t_current_jacob_data  current_jacob_data;
   t_loop_data           loop_data;
   size_t                insertion_index;

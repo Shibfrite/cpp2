@@ -1,6 +1,7 @@
 #include "PMergeMe.hpp"
 
-size_t  binary_search(std::deque<int> *main, int greatest_loser,
+template <typename Container>
+size_t  binary_search(Container *main, int greatest_loser,
                       unsigned long pair_size, int min, int max)
 {
   int mid_pair_index = ((min + max) / 2);
@@ -18,7 +19,8 @@ size_t  binary_search(std::deque<int> *main, int greatest_loser,
   return binary_search(main, greatest_loser, pair_size, min, max);
 }
 
-void  init_pend(std::deque<int> *main, std::deque<int> *pend, unsigned long pair_size)
+template <typename Container>
+void  init_pend(Container *main, Container *pend, unsigned long pair_size)
 {
   for (size_t pair_start_index = pair_size * 2;
       pair_start_index + pair_size <= main->size();
@@ -34,7 +36,8 @@ void set_current_jacob_data(bool is_first, t_current_jacob_data *current_jacob_d
   current_jacob_data->maximal_insertion_index = current_jacob_data->jacob_number + current_jacob_data->previous_jacob_number - 1;
 }
 
-void set_loop_data(t_loop_data *loop_data, std::deque<int> *pend, int insertions_left, unsigned int pair_size)
+template <typename Container>
+void set_loop_data(t_loop_data *loop_data, Container *pend, int insertions_left, unsigned int pair_size)
 {
   loop_data->index_of_pair = (insertions_left - 1) * pair_size;
   if ((int)pend->size() <= loop_data->index_of_pair)
@@ -48,10 +51,11 @@ void set_loop_data(t_loop_data *loop_data, std::deque<int> *pend, int insertions
 }
 
 //insert at destination_index - 1
-void  transfer_range(std::deque<int> *source, size_t source_start_index, unsigned int source_size,
-                      std::deque<int> *destination, size_t destination_index)
+template <typename Container>
+void  transfer_range(Container *source, size_t source_start_index, unsigned int source_size,
+                      Container *destination, size_t destination_index)
 {
-  std::deque<int>::iterator it = source->begin() + source_start_index;
+  typename Container::iterator it = source->begin() + source_start_index;
   destination->insert(destination->begin() + destination_index, it, it + source_size);
   source->erase(it, it + source_size);
 }
